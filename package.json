@@ -1,0 +1,22 @@
+{
+  "name": "nsi_electronjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikola-stevanovic14/NSI_ElectronJS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikola-stevanovic14/NSI_ElectronJS/issues"
+  },
+  "homepage": "https://github.com/nikola-stevanovic14/NSI_ElectronJS#readme",
+  "devDependencies": {
+    "electron": "^16.0.4"
+  }
+}
