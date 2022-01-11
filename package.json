@@ -18,5 +18,8 @@
   "homepage": "https://github.com/nikola-stevanovic14/NSI_ElectronJS#readme",
   "devDependencies": {
     "electron": "^16.0.4"
+  },
+  "dependencies": {
+    "mysql": "^2.18.1"
   }
 }

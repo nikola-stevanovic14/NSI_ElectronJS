@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
+const {initConnectionPool, getTestData} = require('./dbService')
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -13,15 +14,30 @@ const createWindow = () => {
   
     win.loadFile('views/index.html')
     win.webContents.openDevTools()
-  }
+}
 
-  app.whenReady().then(() => {
+app.whenReady().then(() => {
     createWindow()
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
       })
-  })
-  app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
-  })
+})
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
+
+initConnectionPool()
+getTestData()
+.then((data) => {
+  data.forEach(element => {
+    console.log(element)
+  });
+})
+.catch((err) => {
+  console.error(err);
+})
+
+
+ 
