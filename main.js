@@ -32,7 +32,8 @@ initConnectionPool()
 getTestData()
 .then((data) => {
   data.forEach(element => {
-    console.log(element)
+    console.log(element);
+    console.log('aaa');
   });
 })
 .catch((err) => {
