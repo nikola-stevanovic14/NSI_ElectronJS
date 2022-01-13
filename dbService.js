@@ -24,5 +24,33 @@ exports.getTestData = async () => {
     })
 }
 
+exports.register= async(user)=>{
+    return await new Promise (function(resolve, reject){
+        const values=[[
+            user.username,
+            user.passwordHash
+        ]]
+        pool.query('INSERT INTO user (Username  , PasswordHash) VALUES (?)',values,(err,data)=>{
+            if(err)
+            {
+                reject(err);
+            }
+            resolve(data);
+        })
+    });
+}
+
+exports.login = async(user) => {
+    return await new Promise (function(resolve, reject) {
+        let sqlText = "SELECT * FROM user WHERE Username = " + user.username + "AND PasswordHash = " + user.passwordHash;
+        pool.query(sqlText ,(err, data) => {
+            if(err){
+                reject(err)
+            }
+            resolve(data[0])
+        })
+    })
+}
+
 
 

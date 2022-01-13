@@ -20,6 +20,7 @@
     "electron": "^16.0.4"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "mysql2": "^2.3.3"
   }
 }

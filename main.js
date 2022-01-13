@@ -1,6 +1,7 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const {initConnectionPool, getTestData} = require('./dbService')
+const {initConnectionPool, getTestData, register, login} = require('./dbService')
+const bcrypt = require('bcrypt');
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -12,7 +13,7 @@ const createWindow = () => {
       nodeIntegration: true
     })
   
-    win.loadFile('views/index.html')
+    win.loadFile('views/login.html')
     win.webContents.openDevTools()
 }
 
@@ -40,5 +41,42 @@ getTestData()
   console.error(err);
 })
 
+function seedUsers() {
+  let user1 = {}, user2 = {};
+  user1.username = 'Nikola';
+  user1.password = 'Test.123';
 
- 
+  user2.username = 'Lazar';
+  user2.password = 'Test.123';
+
+  bcrypt.hash(user1.password, 10, function(err, hash) {
+    // Store hash in your password DB.
+    user1.passwordHash = hash;
+    register(user1);
+  });
+  bcrypt.hash(user2.password, 10, function(err, hash) {
+    // Store hash in your password DB.
+    user2.passwordHash = hash;
+    register(user2);
+  });
+}
+
+//seedUsers();
+
+ipcMain.on('login-event', (event, arg) => {
+  console.log(arg); // prints "ping"
+  
+
+  let user = {};
+  user.username = arg.username;
+  user.passwordHash = arg.passwordHash;
+  const userData = login(user);
+  
+  if (userData){
+    event.success = true;
+    //event.returnValue = 'pong';
+  }
+  else{
+    event.success = false;
+  }
+})
