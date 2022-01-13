@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+const bcrypt = require('bcrypt')
 
 let pool
 
@@ -42,12 +43,19 @@ exports.register= async(user)=>{
 
 exports.login = async(user) => {
     return await new Promise (function(resolve, reject) {
-        let sqlText = "SELECT * FROM user WHERE Username = " + user.username + "AND PasswordHash = " + user.passwordHash;
+        let sqlText = "SELECT * FROM user WHERE Username = '" + user.username + "'";
         pool.query(sqlText ,(err, data) => {
             if(err){
                 reject(err)
             }
-            resolve(data[0])
+            if(data && data.length > 0){
+                const userDb = data[0]
+                const success = bcrypt.compareSync(user.password, userDb.PasswordHash);
+                if(success){
+                    resolve(userDb)
+                }
+                resolve(null)
+            }
         })
     })
 }

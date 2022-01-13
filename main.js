@@ -1,27 +1,48 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const {initConnectionPool, getTestData, register, login} = require('./dbService')
-const bcrypt = require('bcrypt');
+const {initConnectionPool, getTestData, login} = require('./dbService')
+const {seedUsers} = require('./seeders')
 
-const createWindow = () => {
-    const win = new BrowserWindow({
+let loginWin
+let mainWindow
+
+const createLoginWindow = () => {
+    loginWin = new BrowserWindow({
       width: 800,
       height: 600,
       webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        enableRemoteModule: false,
         preload: path.join(__dirname, 'preload.js')
-      },
-      nodeIntegration: true
+      }
     })
   
-    win.loadFile('views/login.html')
-    win.webContents.openDevTools()
+    loginWin.loadFile('views/login.html')
+    loginWin.webContents.openDevTools()
+}
+
+const createMainWindow = () => {
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  })
+
+  mainWindow.loadFile('views/index.html')
+  mainWindow.webContents.openDevTools()
 }
 
 app.whenReady().then(() => {
-    createWindow()
+  createLoginWindow()
 
     app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
+        if (BrowserWindow.getAllWindows().length === 0) createLoginWindow()
       })
 })
 
@@ -34,49 +55,29 @@ getTestData()
 .then((data) => {
   data.forEach(element => {
     console.log(element);
-    console.log('aaa');
   });
 })
 .catch((err) => {
   console.error(err);
 })
 
-function seedUsers() {
-  let user1 = {}, user2 = {};
-  user1.username = 'Nikola';
-  user1.password = 'Test.123';
-
-  user2.username = 'Lazar';
-  user2.password = 'Test.123';
-
-  bcrypt.hash(user1.password, 10, function(err, hash) {
-    // Store hash in your password DB.
-    user1.passwordHash = hash;
-    register(user1);
-  });
-  bcrypt.hash(user2.password, 10, function(err, hash) {
-    // Store hash in your password DB.
-    user2.passwordHash = hash;
-    register(user2);
-  });
-}
-
 //seedUsers();
 
 ipcMain.on('login-event', (event, arg) => {
-  console.log(arg); // prints "ping"
-  
-
   let user = {};
   user.username = arg.username;
-  user.passwordHash = arg.passwordHash;
-  const userData = login(user);
-  
-  if (userData){
-    event.success = true;
-    //event.returnValue = 'pong';
-  }
-  else{
-    event.success = false;
-  }
+  user.password = arg.password;
+  login(user)
+  .then((userData) => {
+    if (userData){
+      createMainWindow()
+      loginWin.close()
+    }
+    else{
+      event.returnValue = false;
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+  })
 })
