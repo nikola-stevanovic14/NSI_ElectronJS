@@ -11,6 +11,6 @@ exports.seedUsers = () => {
   
     user1.passwordHash = bcrypt.hashSync(user1.password, 10);
     register(user1);
-    user2.passwordHash = bcrypt.hash(user2.password, 10);
+    user2.passwordHash = bcrypt.hashSync(user2.password, 10);
     register(user2);
 }
