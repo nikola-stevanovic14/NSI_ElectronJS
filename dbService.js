@@ -56,6 +56,7 @@ exports.login = async(user) => {
                 }
                 resolve(null)
             }
+            resolve(null)
         })
     })
 }

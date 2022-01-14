@@ -9,7 +9,7 @@ let mainWindow
 const createLoginWindow = () => {
     loginWin = new BrowserWindow({
       width: 800,
-      height: 600,
+      height: 700,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -51,15 +51,6 @@ app.on('window-all-closed', () => {
 })
 
 initConnectionPool()
-getTestData()
-.then((data) => {
-  data.forEach(element => {
-    console.log(element);
-  });
-})
-.catch((err) => {
-  console.error(err);
-})
 
 //seedUsers();
 
