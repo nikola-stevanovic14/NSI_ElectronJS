@@ -1,10 +1,11 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, Tray } = require('electron')
 const path = require('path')
 const {initConnectionPool, getTestData, login} = require('./dbService')
 const {seedUsers} = require('./seeders')
 
 let loginWin
 let mainWindow
+let tray
 
 const createLoginWindow = () => {
     loginWin = new BrowserWindow({
@@ -19,7 +20,7 @@ const createLoginWindow = () => {
     })
   
     loginWin.loadFile('views/login.html')
-    loginWin.webContents.openDevTools()
+    //loginWin.webContents.openDevTools()
 }
 
 const createMainWindow = () => {
@@ -62,6 +63,15 @@ ipcMain.on('login-event', (event, arg) => {
   .then((userData) => {
     if (userData){
       createMainWindow()
+      tray = new Tray('./resources/images/chess.png')
+      tray.setToolTip('Chess app')
+      tray.displayBalloon({title: '', content: 'Successful login!'})
+      tray.on('click', () =>{
+        if(mainWindow){
+          mainWindow.isVisible()?mainWindow.hide():mainWindow.show()
+        }
+      })
+      setTimeout(() => {tray.removeBalloon()},5000);
       loginWin.close()
     }
     else{
