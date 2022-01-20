@@ -43,11 +43,6 @@ CREATE TABLE `nsi`.`players` (
     FOREIGN KEY (`Title`)
     REFERENCES `nsi`.`titles` (`Id`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `FK_PLAYERS_PLAYERINFORMALCATEGORIES`
-    FOREIGN KEY (`Category`)
-    REFERENCES `nsi`.`playerinformalcategories` (`Id`)
-    ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 	
 -- Rounds
