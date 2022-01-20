@@ -1,0 +1,14 @@
+[
+	{
+		"PairingSystem": "Swiss"
+	},
+	{
+		"PairingSystem": "Berger"
+	},
+	{
+		"PairingSystem": "Knockout"
+	},
+	{
+		"PairingSystem": "RoundRobin"
+	}
+]

@@ -1,0 +1,74 @@
+[
+	{
+		"Title": "GM",
+		"FullName": "International Grandmaster",
+		"FIDE": 1,
+		"Prestige": 1
+	},
+	{
+		"Title": "IM",
+		"FullName": "International Master",
+		"FIDE": 1,
+		"Prestige": 2
+	},
+	{
+		"Title": "WGM",
+		"FullName": "Woman Grandmaster",
+		"FIDE": 1,
+		"Prestige": 3
+	},
+	{
+		"Title": "WIM",
+		"FullName": "Woman International Grandmaster",
+		"FIDE": 1,
+		"Prestige": 4
+	},
+	{
+		"Title": "FM",
+		"FullName": "FIDE Master",
+		"FIDE": 1,
+		"Prestige": 5
+	},
+	{
+		"Title": "CM",
+		"FullName": "Candidate Master",
+		"FIDE": 1,
+		"Prestige": 6
+	},
+	{
+		"Title": "WFM",
+		"FullName": "Woman FIDE Master",
+		"FIDE": 1,
+		"Prestige": 7
+	},
+	{
+		"Title": "WCM",
+		"FullName": "Woman Candidate Master",
+		"FIDE": 1,
+		"Prestige": 8
+	},
+	{
+		"Title": "MK",
+		"FullName": "Master candidate",
+		"FIDE": 0,
+		"Prestige": 9
+	},
+	{
+		"Title": "I",
+		"FullName": "I category",
+		"FIDE": 0,
+		"Prestige": 10
+	},
+	{
+		"Title": "II",
+		"FullName": "II category",
+		"FIDE": 0,
+		"Prestige": 11
+	},
+	{
+		"Title": "III",
+		"FullName": "III category",
+		"FIDE": 0,
+		"Prestige": 12
+	}
+]

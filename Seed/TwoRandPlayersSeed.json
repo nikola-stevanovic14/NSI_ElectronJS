@@ -1,0 +1,24 @@
+[
+	{
+		"FirstName": "John",
+		"LastName": "Doe",
+		"Fide_Id": null,
+		"EloRating": 1500,
+		"Coefficient": 30,
+		"Tittle": 12,
+		"Country": "England",
+		"Sex": "Male",
+		"Birth": "2005-04-23T00:00:00.000Z"
+	},
+	{
+		"FirstName": "Jane",
+		"LastName": "Doe",
+		"Fide_Id": null,
+		"EloRating": 1700,
+		"Coefficient": 15,
+		"Tittle": 11,
+		"Country": "England",
+		"Sex": "Female",
+		"Birth": "2007-01-10T00:00:00.000Z"
+	}
+]
