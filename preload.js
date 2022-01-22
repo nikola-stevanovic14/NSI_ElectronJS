@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld(
       },
       sendSync: (channel, data) => {
         // whitelist sync channels
-        let validChannels = ["login-event"];
+        let validChannels = ["login-event", 'addTournamentToDB-event', 'getTournamentTypes-event'];
         if (validChannels.includes(channel)) {
             return ipcRenderer.sendSync(channel, data);
         }

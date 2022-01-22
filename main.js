@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, Tray } = require('electron')
 const path = require('path')
-const {initConnectionPool, getTestData, login} = require('./dbService')
+const {initConnectionPool, getTestData, login, getTournamentTypes, addNewTournament} = require('./dbService')
 const {seedUsers} = require('./seeders')
 
 let loginWin
@@ -76,6 +76,51 @@ ipcMain.on('login-event', (event, arg) => {
     }
     else{
       event.returnValue = false;
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+  })
+})
+
+ipcMain.on('addTournamentToDB-event', (event, arg) => {
+  addNewTournament(arg)
+  .then((success) => {
+    if (success){
+      tray = new Tray('./resources/images/chess.png')
+      tray.setToolTip('Chess app')
+      tray.displayBalloon({title: '', content: 'Tournament created!'})
+      tray.on('click', () =>{
+        if(mainWindow){
+          mainWindow.isVisible()?mainWindow.hide():mainWindow.show()
+        }
+      })
+      setTimeout(() => {tray.removeBalloon()},5000);
+      event.returnValue = true;
+    }
+    else{
+      event.returnValue = false;
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+  })
+})
+
+ipcMain.on('getTournamentTypes-event', (event, arg) => {
+  getTournamentTypes()
+  .then((tournamentTypes) => {
+    if (tournamentTypes){
+      let select2ModelTypes = tournamentTypes.map(x => {
+        let model = {};
+        model.id = x.Id;
+        model.text = x.PairingSystem
+        return model;
+      });
+      event.returnValue = select2ModelTypes;
+    }
+    else{
+      event.returnValue = null;
     }
   })
   .catch((err) => {

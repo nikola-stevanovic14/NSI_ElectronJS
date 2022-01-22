@@ -61,5 +61,34 @@ exports.login = async(user) => {
     })
 }
 
+exports.getTournamentTypes = async() => {
+    return await new Promise (function(resolve, reject) {
+        let sqlText = `SELECT * FROM pairingsystems`;
+        pool.query(sqlText, (err, data) => {
+            if (err){
+                reject(err);
+            }
+            resolve(data);
+        })
+    });
+}
+
+exports.addNewTournament = async(tournamentData) => {
+    return await new Promise (function(resolve, reject) {
+        let sqlText = `
+        INSERT INTO tournaments
+        (PairingSystem, NumberOfRounds, Name, CreatedDate, StartDate, EndDate, Open, Closed, Finished, Tempo, MaxNumberOfPlayers, NumberOfPlayers)
+        VALUES(${tournamentData.PairingSystem}, ${tournamentData.NumberOfRounds}, '${tournamentData.Name}', '${tournamentData.CreatedDate}',
+            '${tournamentData.StartDate}', '${tournamentData.EndDate}', ${tournamentData.Open}, ${tournamentData.Closed},
+            ${tournamentData.Finished}, ${tournamentData.Tempo}, ${tournamentData.MaxNumberOfPlayers}, ${tournamentData.NumberOfPlayers});`;
+
+        pool.query(sqlText, (err, data) => {
+            if (err){
+                reject(err);
+            }
+            resolve(data);
+        })
+    });
+}
 
 
