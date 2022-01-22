@@ -1,5 +1,6 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2')
 const bcrypt = require('bcrypt')
+const {provideTournamentModels} = require('./dataLayer/tournament')
 
 let pool
 
@@ -61,5 +62,16 @@ exports.login = async(user) => {
     })
 }
 
+/// TOURNAMENTS
 
+exports.getTournaments = async () => {
+    return await new Promise(function(resolve, reject){
+        pool.query("SELECT * FROM tournaments",(err, data) => {
+            if(err){
+                reject(err)
+            }
+            resolve(provideTournamentModels(data))
+        })
+    })
+}
 
