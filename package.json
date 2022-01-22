@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/nikola-stevanovic14/NSI_ElectronJS#readme",
   "devDependencies": {
-    "electron": "^16.0.4"
+    "electron": "^16.0.7"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",

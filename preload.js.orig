@@ -16,7 +16,11 @@ contextBridge.exposeInMainWorld(
       },
       sendSync: (channel, data) => {
         // whitelist sync channels
-        let validChannels = ["login-event", "get-tournaments", "get-rankings", 'addTournamentToDB-event', 'getTournamentTypes-event', "get-rankings"];
+<<<<<<< Updated upstream
+        let validChannels = ["login-event", "get-tournaments", "get-rankings", 'addTournamentToDB-event', 'getTournamentTypes-event'];
+=======
+        let validChannels = ["login-event", "get-tournaments", "get-rankings"];
+>>>>>>> Stashed changes
         if (validChannels.includes(channel)) {
             return ipcRenderer.sendSync(channel, data);
         }

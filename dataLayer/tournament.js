@@ -1,5 +1,6 @@
 exports.provideTournamentModel = (data) => {
     const model = {
+        id: data.Id,
         name: data.Name,
         pairingSystem: data.PairingSystem,
         startDate: data.StartDate.toLocaleDateString("en-US"),

@@ -1,6 +1,9 @@
 const mysql = require('mysql2')
 const bcrypt = require('bcrypt')
 const {provideTournamentModels} = require('./dataLayer/tournament')
+const {provideTitleModels} = require('./dataLayer/title')
+const {provideRankingModels} = require('./dataLayer/rankings')
+const {providePlayerModel} = require('./dataLayer/player')
 
 let pool
 
@@ -104,3 +107,45 @@ exports.getTournaments = async () => {
     })
 }
 
+
+/// RANKINGS
+
+exports.getRankings = async (tournamentId) => {
+    return await new Promise(function(resolve, reject){
+        pool.query("SELECT * FROM tournamentplayerrankings WHERE TournamentId = "+tournamentId,(err, data) => {
+            if(err){
+                reject(err)
+            }
+            resolve(provideRankingModels(data))
+        })
+    })
+}
+
+/// PLAYER
+
+exports.getPlayerById = async (playerId) => {
+    return await new Promise(function(resolve, reject){
+        pool.query("SELECT * FROM players WHERE Id = "+playerId,(err, data) => {
+            if(err){
+                reject(err)
+            }
+            const players = providePlayerModel(data)
+            resolve(players && players.length > 0 ? players[0] : null)
+        })
+    })
+}
+
+
+///TITLES
+
+exports.getTitleById = async (titleId) => {
+    return await new Promise(function(resolve, reject){
+        pool.query("SELECT * FROM titles WHERE Id = "+titleId,(err, data) => {
+            if(err){
+                reject(err)
+            }
+            const titles = provideTitleModels(data)
+            resolve(titles && titles.length > 0 ? titles[0] : null)
+        })
+    })
+}
