@@ -1,16 +1,19 @@
-const { app, BrowserWindow, ipcMain, Tray } = require('electron')
+const { app, BrowserWindow, ipcMain, Tray, BrowserView } = require('electron')
 const path = require('path')
 const {initConnectionPool, getTestData, login, getTournamentTypes, addNewTournament} = require('./dbService')
 const {seedUsers} = require('./seeders')
+const {getTournaments} = require('./dbService')
 
 let loginWin
 let mainWindow
 let tray
+let screenWidth, screenHeight
 
 const createLoginWindow = () => {
     loginWin = new BrowserWindow({
       width: 800,
       height: 700,
+      icon: './resources/images/chess.png',
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
@@ -25,8 +28,9 @@ const createLoginWindow = () => {
 
 const createMainWindow = () => {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: Math.round(0.85 * screenWidth),
+    height: Math.round(0.85 * screenHeight),
+    icon: './resources/images/chess.png',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -40,6 +44,10 @@ const createMainWindow = () => {
 }
 
 app.whenReady().then(() => {
+  const { screen } = require('electron')
+  const primaryDisplay = screen.getPrimaryDisplay()
+  screenWidth = primaryDisplay.workAreaSize.width
+  screenHeight = primaryDisplay.workAreaSize.height
   createLoginWindow()
 
     app.on('activate', () => {
@@ -122,6 +130,15 @@ ipcMain.on('getTournamentTypes-event', (event, arg) => {
     else{
       event.returnValue = null;
     }
+  })
+  .catch((err) => {
+    console.error(err);
+  })
+})
+ipcMain.on('get-tournaments', (event, arg) => {
+  getTournaments()
+  .then((tournaments) => {
+    event.returnValue = tournaments
   })
   .catch((err) => {
     console.error(err);
