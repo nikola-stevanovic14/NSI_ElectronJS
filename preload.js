@@ -9,14 +9,14 @@ contextBridge.exposeInMainWorld(
   "api", {
     send: (channel, data) => {
         // whitelist async channels
-        let validChannels = [];
+        let validChannels = ["get-rankings"];
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data);
         }
     },
     sendSync: (channel, data) => {
         // whitelist sync channels
-        let validChannels = ["login-event", "get-tournaments", "get-rankings", 'addTournamentToDB-event', 'getTournamentTypes-event', "get-rankings"];
+        let validChannels = ["login-event", "get-tournaments", 'addTournamentToDB-event', 'getTournamentTypes-event'];
         if (validChannels.includes(channel)) {
             return ipcRenderer.sendSync(channel, data);
         }
@@ -24,16 +24,9 @@ contextBridge.exposeInMainWorld(
     receive: (channel, func) => {
       let validChannels = ["recieve-rankings"];
       if (validChannels.includes(channel)) {
-        // Deliberately strip event as it includes `sender` 
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
+        // Deliberately strip event as it includes `sender`
+        ipcRenderer.on(channel, (event, ...args) => {func(...args)});
       }
-    },
-    reply: (channel, func) => {
-        let validChannels = ["recieve-rankings"];
-        if (validChannels.includes(channel)) {
-          // Deliberately strip event as it includes `sender` 
-          ipcRenderer.on(channel, (event, ...args) => func(...args));
-        }
-      },
+    }
   }
 );

@@ -70,7 +70,7 @@
 
     $('#tournament-table tbody').on('click', 'tr', function () {
         const tournamentId = parseInt($(this).attr('id'))
-        const tournaments = window.api.sendSync("get-rankings", tournamentId)
+        const tournaments = window.api.send("get-rankings", tournamentId)
     } );
   });
 </script>

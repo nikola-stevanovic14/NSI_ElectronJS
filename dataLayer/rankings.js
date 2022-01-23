@@ -1,5 +1,3 @@
-const {getPlayerById} = require('../dbService')
-
 exports.provideRankingModel = (data) => {
     const model = {
         id: data.Id,
@@ -17,14 +15,8 @@ exports.provideRankingModel = (data) => {
         eloPerformance: data.EloPerformance,
         luck: data.Luck,
     }
-    getPlayerById(model.playerId)
-    .then((player) => {
-        model.player = player.firstName + ' ' + player.lastName
-        return model
-    })
-    .catch((err) => {
-        console.error(err);
-    })
+    
+    return model
 }
 
 exports.provideRankingModels = (data) => {

@@ -50,18 +50,15 @@
 </html>
 
 <script>
-  const {ipcRenderer} = require('electron');
-
   $(document).ready(function () {
     const table = $('#ranking-table').DataTable({
       searching: false,
       length:10,
       lengthChange:false,
     });
-    let rankings;
-    //window.api.receive("recieve-rankings", (data) => {
-    ipcRenderer.on("recieve-rankings", (event, data) => {
-      rankings = data;
+    let rankings
+    window.api.receive("recieve-rankings", (data) => {
+      rankings = data.result;
       if (rankings != null){
         rankings.forEach(ranking => {
           table.row.add( [
@@ -81,7 +78,6 @@
           ]).draw( false )
         });
       }
-      event.returnValue = true;
     });
     
   });

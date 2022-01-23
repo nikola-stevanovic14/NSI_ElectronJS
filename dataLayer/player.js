@@ -1,5 +1,3 @@
-const {getTitleById} = require('../dbService')
-
 exports.providePlayerModel = (data) => {
     const model = {
         id: data.Id,
@@ -13,15 +11,15 @@ exports.providePlayerModel = (data) => {
         sex: data.Sex,
         birth: data.Birth,
     }
-
-    getTitleById(title)
-    .then((title) => {
-        model.title = title.Title
-        return model
-    })
-    .catch((err) => {
-        console.error(err);
-    })
+    return model
+    // getTitleById(title)
+    // .then((title) => {
+    //     model.title = title.Title
+    //     return model
+    // })
+    // .catch((err) => {
+    //     console.error(err);
+    // })
 }
 
 exports.providePlayerModels = (data) => {
