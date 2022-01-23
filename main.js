@@ -88,6 +88,12 @@ function setAppMenu(){
       click: async () => {
         mainWindow.loadFile('views/index.html')
       }
+    },
+    {
+      label: 'Add tournament',
+      click: async () => {
+        mainWindow.loadFile('views/addTournament.html')
+      }
     }
   ]
 
