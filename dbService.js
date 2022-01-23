@@ -171,3 +171,49 @@ exports.getTitleById = async (titleId) => {
         })
     })
 }
+
+/// ROUNDS
+
+exports.getRound = async (tournamentId, roundNumber) => {
+    return await new Promise(function(resolve, reject){
+        let sqlText = `
+        SELECT 
+        FROM rounds AS R
+        INNER JOIN tournaments AS T ON T.Id = R.Tournament
+        INNER JOIN players AS WHITE ON R.WhitePlayer = WHITE.Id
+        INNER JOIN players AS BLACK ON R.BlackPlayer = BLACK.Id
+        WHERE R.Tournament = ${tournamentId} AND R.RoundNumber = ${roundNumber}`;
+
+        pool.query(sqlText,(err, data) => {
+            if(err){
+                reject(err)
+            }
+            resolve(data);
+        })
+    })
+}
+
+exports.addRound = async (matches, roundNumber, tournamentId) => {
+    return await new Promise(function(resolve, reject){
+        let sqlText = '';
+        matches.forEach(match => {
+            singleInsert = `
+            INSERT INTO rounds
+            (RoundNumber, WhitePlayer, BlackPlayer, Tournament, WhitePoints, BlackPoints, Started, Finished, WhiteTitle, BlackTitle, Result)
+            VALUES (${roundNumber}, ${match.whiteId}, ${match.blackId}, ${tournamentId}, 
+                ${match.whitePoints != null ? match.whitePoints : 'NULL'}, ${match.blackPoints != null ? match.blackPoints : 'NULL'},
+                0, 0, ${match.whiteTitle}, ${match.blackTitle}, NULL);
+
+            
+            `;
+            sqlText += singleInsert;
+        });
+
+        pool.query(sqlText,(err, data) => {
+            if(err){
+                reject(err)
+            }
+            resolve(data);
+        })
+    })
+}
