@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain , Tray, Notification  } = require('electron')
+const { app, BrowserWindow, ipcMain , Tray, Notification, Menu  } = require('electron')
 const path = require('path')
 const {initConnectionPool, getTestData, login, getTournamentTypes, addNewTournament} = require('./dbService')
 const {seedUsers} = require('./seeders')
@@ -8,6 +8,8 @@ let loginWin
 let mainWindow
 let tray
 let screenWidth, screenHeight
+
+app.setName('Chess app')
 
 const createLoginWindow = () => {
     loginWin = new BrowserWindow({
@@ -24,6 +26,7 @@ const createLoginWindow = () => {
   
     loginWin.loadFile('views/login.html')
     //loginWin.webContents.openDevTools()
+    setEmptyAppMenu()
 }
 
 const createMainWindow = () => {
@@ -41,6 +44,7 @@ const createMainWindow = () => {
 
   mainWindow.loadFile('views/index.html')
   mainWindow.webContents.openDevTools()
+  setAppMenu()
 }
 
 app.whenReady().then(() => {
@@ -56,12 +60,40 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform !== 'darwin') {
+    if(tray) tray.destroy()
+    app.quit()
+  }
 })
 
 initConnectionPool()
 
 //seedUsers();
+
+function setEmptyAppMenu(){
+  const menu = Menu.buildFromTemplate([])
+  Menu.setApplicationMenu(menu)
+}
+
+function setAppMenu(){
+  const template = [
+    {
+      label: app.name,
+      submenu: [
+        { role: 'quit' }
+      ]
+    },
+    {
+      label: 'Home page',
+      click: async () => {
+        mainWindow.loadFile('views/index.html')
+      }
+    }
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
 
 ipcMain.on('login-event', (event, arg) => {
   let user = {};
