@@ -9,20 +9,20 @@ contextBridge.exposeInMainWorld(
   "api", {
     send: (channel, data) => {
         // whitelist async channels
-        let validChannels = ["get-rankings"];
+        let validChannels = ["get-rankings", 'addTournamentToDB-event', 'start-tournament'];
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data);
         }
     },
     sendSync: (channel, data) => {
         // whitelist sync channels
-        let validChannels = ["login-event", "get-tournaments", 'addTournamentToDB-event', 'getTournamentTypes-event'];
+        let validChannels = ["login-event", "get-tournaments", 'getTournamentTypes-event'];
         if (validChannels.includes(channel)) {
             return ipcRenderer.sendSync(channel, data);
         }
     },
     receive: (channel, func) => {
-      let validChannels = ["recieve-rankings"];
+      let validChannels = ["recieve-rankings", "start-tournament-data"];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
         ipcRenderer.on(channel, (event, ...args) => {func(...args)});

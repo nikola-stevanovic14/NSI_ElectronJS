@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <title>Add tournament</title>
+    <script src="../libs/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/style.css">
+  </head>
+  <body style="background-color: #d5d554;">
+
+    <div class='container'>
+      <div class="row" style="height: 80px; margin-left: 20px;">
+        <div class="col-md-4"></div>
+        <div class="col-md-3">
+            <h3 id="tournament-name" style="text-align: center; margin: revert;">TURNIR 1</h3>
+        </div>
+        <div class="col-md-4"></div>
+      </div>
+      <div class="row table-container" style="background-color: #cccccc !important;">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-10">
+          <table id="start-tournament-table" class="table table-striped table-hover table-bordered" style="background-color: #9FA4A9; margin-top: 20px;">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Elo</th>
+                <th>Title</th>
+                <th>Add</th>
+              </tr>
+            </thead>
+            <tbody style="text-align: center;">
+            </tbody>
+          </table>
+          <button type="button" class="btn btn-secondary" id="btn-start-tournament" style="float: right; margin-bottom: 20px; margin-top: 15px; background-color: #7c0e86;" onclick="startTournament()">Start tournament</button>
+        </div>
+        <div class="col-md-1">
+        </div>
+      </div>
+      <div class="row" style="height: 70px;">
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  </body>
+</html>
+
+<script>
+  let playersToAdd = []
+  $(document).ready(function () {
+    const table = $('#start-tournament-table').DataTable({
+      searching: false,
+      length:10,
+      lengthChange:false,
+    });
+    window.api.receive("start-tournament-data", (data) => {
+      const torunamentName = data.tournamentName
+      $('#tournament-name').text(torunamentName)
+      const players = data.players
+      if (players != null){
+        players.forEach(player => {
+          table.row.add( [
+            player.FirstName + ' ' + player.LastName,
+            player.EloRating,
+            player.TitleName,
+            `<input type = "checkbox" name="cb" value="${player.Id}"">`
+          ]).node().id = player.Id
+          table.draw( false )
+        });
+      }
+    });
+  });
+
+  function startTournament(){
+    let players= []
+    $("input:checkbox[name=cb]:checked").each(function(){
+      players.push(parseInt($(this).val()))
+    });
+
+    window.api.send("start-tournament", {players: players})
+  }
+</script>

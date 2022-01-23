@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain , Tray, Notification, Menu  } = require('ele
 const path = require('path')
 const {initConnectionPool, getTestData, login, getTournamentTypes, addNewTournament} = require('./dbService')
 const {seedUsers} = require('./seeders')
-const {getTournaments, getRankings} = require('./dbService')
+const {getTournaments, getRankings, getPlayers} = require('./dbService')
 
 let loginWin
 let mainWindow
@@ -43,6 +43,7 @@ const createMainWindow = () => {
   })
 
   mainWindow.loadFile('views/index.html')
+  //mainWindow.loadFile('views/startTournament.html')
   mainWindow.webContents.openDevTools()
   setAppMenu()
 }
@@ -80,7 +81,8 @@ function setAppMenu(){
     {
       label: app.name,
       submenu: [
-        { role: 'quit' }
+        { role: 'reload'},
+        { role: 'quit'}
       ]
     },
     {
@@ -138,8 +140,19 @@ ipcMain.on('addTournamentToDB-event', (event, arg) => {
         body: 'Tournament created!'
       })
       notf.show()
-      setTimeout(() => {notf.close()},4000);
-      event.returnValue = true;
+      setTimeout(() => {notf.close()},4000)
+      mainWindow.loadFile('views/startTournament.html')
+
+      getPlayers()
+        .then((players) => {
+          mainWindow.loadFile('views/startTournament.html')
+          mainWindow.webContents.on('dom-ready', () => {
+            mainWindow.webContents.send('start-tournament-data', {tournamentName: arg.Name, players: players})
+          })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
     else{
       event.returnValue = false;
@@ -185,11 +198,16 @@ ipcMain.on('get-rankings', (event, arg) => {
   getRankings(tournamentId)
   .then((rankings) => {
     mainWindow.loadFile('views/rankings.html')
-    mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.on('dom-ready', () => {
       mainWindow.webContents.send('recieve-rankings', {result: rankings})
     })
   })
   .catch((err) => {
     console.error(err);
   })
+})
+
+ipcMain.on('start-tournament', (event, arg) => {
+  const players = arg.players;
+  debugger
 })

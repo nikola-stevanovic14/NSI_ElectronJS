@@ -47,7 +47,7 @@ const onCreateTournament = function(){
     });
 
     if (isEveryithingFilled){
-        const response = window.api.sendSync("addTournamentToDB-event", newTournament);
+        const response = window.api.send("addTournamentToDB-event", newTournament);
         let wrongMsg = $('.wrong_msg');
         if(!response){
             wrongMsg.text('Error occured while adding tournament to DB. Try again or contact support.');
