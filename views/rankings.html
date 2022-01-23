@@ -50,6 +50,7 @@
 </html>
 
 <script>
+  const {ipcRenderer} = require('electron');
 
   $(document).ready(function () {
     const table = $('#ranking-table').DataTable({
@@ -57,24 +58,31 @@
       length:10,
       lengthChange:false,
     });
-    window.api.receive("recieve-rankings", (table) => {
+    let rankings;
+    //window.api.receive("recieve-rankings", (data) => {
+    ipcRenderer.on("recieve-rankings", (event, data) => {
+      rankings = data;
+      if (rankings != null){
         rankings.forEach(ranking => {
-        table.row.add( [
-        ranking.player,
-        ranking.tournament,
-        ranking.startingPosition,
-        ranking.startingElo,
-        ranking.startingTitle,
-        ranking.points,
-        ranking.medianBucholz,
-        ranking.bucholz,
-        ranking.wins,
-        ranking.blackWins,
-        ranking.sonnebornBerger,
-        ranking.eloPerformance,
-        ranking.luck
-      ]).draw( false )
+          table.row.add( [
+            ranking.player,
+            ranking.tournament,
+            ranking.startingPosition,
+            ranking.startingElo,
+            ranking.startingTitle,
+            ranking.points,
+            ranking.medianBucholz,
+            ranking.bucholz,
+            ranking.wins,
+            ranking.blackWins,
+            ranking.sonnebornBerger,
+            ranking.eloPerformance,
+            ranking.luck
+          ]).draw( false )
+        });
+      }
+      event.returnValue = true;
     });
-    })
+    
   });
 </script>

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Tray, BrowserView } = require('electron')
+const { app, BrowserWindow, ipcMain, ipcRenderer , Tray, BrowserView } = require('electron')
 const path = require('path')
 const {initConnectionPool, getTestData, login, getTournamentTypes, addNewTournament} = require('./dbService')
 const {seedUsers} = require('./seeders')
@@ -146,11 +146,12 @@ ipcMain.on('get-tournaments', (event, arg) => {
 })
 
 ipcMain.on('get-rankings', (event, arg) => {
-  const tournamentId = arg
+  const tournamentId = arg;
   getRankings(tournamentId)
   .then((rankings) => {
-    win.loadFile('views/rankings.html')
-    ipcRenderer.send('recieve-rankings', rankings)
+    mainWindow.loadFile('views/rankings.html');
+    //window.api.sendSync('recieve-rankings', rankings);
+    event.reply('recieve-rankings', rankings);
   })
   .catch((err) => {
     console.error(err);

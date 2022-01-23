@@ -112,6 +112,27 @@ exports.getTournaments = async () => {
 
 exports.getRankings = async (tournamentId) => {
     return await new Promise(function(resolve, reject){
+        let sqlText = `
+        SELECT P.FirstName AS player, T.Name AS tournament, R.StartingPosition AS startingPosition, R.StartingElo AS startingElo,
+            TITLE.Title AS startingTitle, R.Points AS points, R.MedianBucholz AS medianBucholz, R.Bucholz AS bucholz, R.Wins AS wins,
+            R.BlackWins AS blackWins, R.SonnebornBerger AS sonnebornBerger, R.EloPerformance AS eloPerformance, R.Luck AS luck
+        FROM nsi.tournaments AS T
+        INNER JOIN nsi.tournamentplayerrankings AS R ON T.Id = R.TournamentId
+        INNER JOIN nsi.players AS P ON P.Id = R.PlayerId
+        INNER JOIN nsi.titles AS TITLE ON TITLE.Id = R.StartingTitle
+        ORDER BY R.Points DESC, R.MedianBucholz DESC, R.Bucholz DESC, R.EloPerformance DESC, R.SonnebornBerger DESC, R.Wins DESC, 
+            R.BlackWins DESC, R.Luck DESC, P.EloRating DESC, TITLE.Prestige DESC`;
+        pool.query(sqlText,(err, data) => {
+            if(err){
+                reject(err)
+            }
+            resolve(data)
+        })
+    })
+}
+
+exports.getRankingsModels = async (tournamentId) => {
+    return await new Promise(function(resolve, reject){
         pool.query("SELECT * FROM tournamentplayerrankings WHERE TournamentId = "+tournamentId,(err, data) => {
             if(err){
                 reject(err)
