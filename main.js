@@ -147,7 +147,7 @@ ipcMain.on('addTournamentToDB-event', (event, arg) => {
         .then((players) => {
           mainWindow.loadFile('views/startTournament.html')
           mainWindow.webContents.on('dom-ready', () => {
-            mainWindow.webContents.send('start-tournament-data', {tournamentName: arg.Name, players: players})
+            mainWindow.webContents.send('start-tournament-data', {tournamentId: success.insertId, tournamentName: arg.Name, players: players})
           })
         })
         .catch((err) => {
@@ -208,6 +208,7 @@ ipcMain.on('get-rankings', (event, arg) => {
 })
 
 ipcMain.on('start-tournament', (event, arg) => {
-  const players = arg.players;
+  const players = arg.players
+  const tournamentId = arg.tournamentId
   debugger
 })
