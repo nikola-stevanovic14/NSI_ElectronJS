@@ -145,6 +145,21 @@ exports.getRankingsModels = async (tournamentId) => {
 
 /// PLAYER
 
+exports.getPlayers = async () => {
+    return await new Promise(function(resolve, reject){
+        pool.query(`
+            SELECT A.*, B.Title AS TitleName 
+            FROM players AS A
+            INNER JOIN titles AS B ON B.Id = A.Title
+            ORDER BY A.Id`, (err, data) => {
+            if(err){
+                reject(err)
+            }
+            resolve(data)
+        })
+    })
+}
+
 exports.getPlayerById = async (playerId) => {
     return await new Promise(function(resolve, reject){
         pool.query("SELECT * FROM players WHERE Id = "+playerId,(err, data) => {
