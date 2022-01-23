@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain , Tray, BrowserView, remote  } = require('electron')
+const { app, BrowserWindow, ipcMain , Tray, Notification  } = require('electron')
 const path = require('path')
 const {initConnectionPool, getTestData, login, getTournamentTypes, addNewTournament} = require('./dbService')
 const {seedUsers} = require('./seeders')
@@ -95,15 +95,12 @@ ipcMain.on('addTournamentToDB-event', (event, arg) => {
   addNewTournament(arg)
   .then((success) => {
     if (success){
-      tray = new Tray('./resources/images/chess.png')
-      tray.setToolTip('Chess app')
-      tray.displayBalloon({title: '', content: 'Tournament created!'})
-      tray.on('click', () =>{
-        if(mainWindow){
-          mainWindow.isVisible()?mainWindow.hide():mainWindow.show()
-        }
+      const notf = new Notification({
+        title: 'Notification',
+        body: 'Tournament created!'
       })
-      setTimeout(() => {tray.removeBalloon()},5000);
+      notf.show()
+      setTimeout(() => {notf.close()},4000);
       event.returnValue = true;
     }
     else{

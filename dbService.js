@@ -120,6 +120,7 @@ exports.getRankings = async (tournamentId) => {
         INNER JOIN nsi.tournamentplayerrankings AS R ON T.Id = R.TournamentId
         INNER JOIN nsi.players AS P ON P.Id = R.PlayerId
         INNER JOIN nsi.titles AS TITLE ON TITLE.Id = R.StartingTitle
+        WHERE T.Id = ` + tournamentId +`
         ORDER BY R.Points DESC, R.MedianBucholz DESC, R.Bucholz DESC, R.EloPerformance DESC, R.SonnebornBerger DESC, R.Wins DESC, 
             R.BlackWins DESC, R.Luck DESC, P.EloRating DESC, TITLE.Prestige DESC`;
         pool.query(sqlText,(err, data) => {
