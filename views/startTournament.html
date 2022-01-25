@@ -88,6 +88,6 @@
 
     let rounds = generateRounds(players, tournamentId);
 
-    window.api.send("start-tournament", {rounds: rounds, tournamentId: tournamentId});
+    window.api.send("start-tournament", {rounds: rounds, tournamentId: tournamentId, players: players});
   }
 </script>

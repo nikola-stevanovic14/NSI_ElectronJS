@@ -210,7 +210,7 @@ ipcMain.on('get-rankings', (event, arg) => {
 ipcMain.on('start-tournament', (event, arg) => {
   const rounds = arg.rounds;
   const tournamentId = arg.tournamentId;
-  startBergerTournament(rounds, tournamentId)
+  startBergerTournament(rounds, tournamentId, arg.players)
     .then((data) => {
       /*
       mainWindow.loadFile('views/startTournament.html')
@@ -221,8 +221,12 @@ ipcMain.on('start-tournament', (event, arg) => {
         .then((data) => {
           mainWindow.loadFile('views/bergerTournamentRounds.html');
           mainWindow.webContents.on('dom-ready', () => {
-            data.tournamentId = tournamentId;
-            mainWindow.webContents.send('round-data', data);
+            let dto = {};
+            dto.matches = data;
+            dto.tournamentId = tournamentId;
+            dto.roundNumber = 1;
+            dto.maxRoundNumber = rounds;
+            mainWindow.webContents.send('round-data', dto);
           });
         });
       
@@ -249,6 +253,15 @@ ipcMain.on('finish-round', (event, arg) => {
       }
       else{
 
+        mainWindow.loadFile('views/bergerTournamentRounds.html');
+          mainWindow.webContents.on('dom-ready', () => {
+            let dto = {};
+            dto.matches = data;
+            dto.tournamentId = arg.tournamentId;
+            dto.roundNumber = arg.roundNumber;
+            dto.maxRoundNumber = arg.maxRoundNumber;
+            mainWindow.webContents.send('round-data', {data: dto});
+          });
       }
     }))
     .catch((err) => {

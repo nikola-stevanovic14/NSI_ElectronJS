@@ -31,8 +31,8 @@ const generateRounds = function (players, tournamentId) {
                 match.blackTitle = black.Title;
             }
             else{
-                white = firstWhite ? players[otherPlayers[k]] : players[otherPlayers[l]];
-                black = firstWhite ? players[otherPlayers[l]] : players[otherPlayers[k]];
+                white = firstWhite ? players[otherPlayers[k - 1]] : players[otherPlayers[l]];
+                black = firstWhite ? players[otherPlayers[l]] : players[otherPlayers[k - 1]];
 
                 match.RoundNumber = i + 1;
                 match.whiteId = white.Id;
@@ -51,6 +51,7 @@ const generateRounds = function (players, tournamentId) {
         rounds.push(round);
 
         firstWhite = !firstWhite;
+        otherPlayers = otherPlayers.concat(otherPlayers.splice(0,1));
     }
 
     return rounds;

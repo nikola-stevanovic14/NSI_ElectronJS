@@ -68,9 +68,10 @@
         });
 
         window.api.receive("round-data", (data) => {
+            debugger;
             results = [];
             roundNumber = data.roundNumber
-            maxRoundNumber = data.NumberOfRounds;
+            maxRoundNumber = data.maxRoundNumber;
             tournamentId = data.tournamentId;
             const roundName = 'Round ' + roundNumber;
             $('#round-name').text(roundName);
@@ -113,18 +114,18 @@
     function onChangedResult(evt) {
         let selectedOption = $("option:selected", this);
         let valueSelected = this.value;
-        let gameIndex = this.attr('data-matchIndex');
+        let gameIndex = $(this).attr('data-matchIndex');
 
         switch (valueSelected) {
-            case 1:
+            case '1':
                 results[gameIndex].WhitePoints = 2;
                 results[gameIndex].BlackPoints = 0;
                 break;
-            case 2:
+            case '2':
                 results[gameIndex].WhitePoints = 1;
                 results[gameIndex].BlackPoints = 1;
                 break;
-            case 3:
+            case '3':
                 results[gameIndex].WhitePoints = 0;
                 results[gameIndex].BlackPoints = 2;
                 break;
@@ -136,15 +137,16 @@
     }
 
     function finishRound() {
-        let filledAll = results.reduce((prev, curr) => prev.WhiteResult != null && prev.BlackResult != null 
-                                                    && curr.WhiteResult != null && curr.BlackResult != null);
+        let filledAll = results.reduce((prev, curr) => prev.WhitePoints != null && prev.BlackPoints != null 
+                                                    && curr.WhitePoints != null && curr.BlackPoints != null);
         if (filledAll === true)
             window.api.sendSync("finish-round", 
                                 {
                                     results: results, 
                                     tournamentId: tournamentId, 
                                     isLastRound: (maxRoundNumber > roundNumber),
-                                    roundNumber: roundNumber
+                                    roundNumber: roundNumber,
+                                    maxRoundNumber: maxRoundNumber
                                 });
     }
 
