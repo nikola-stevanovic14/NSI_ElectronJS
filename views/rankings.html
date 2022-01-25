@@ -55,12 +55,12 @@
       if (rankings != null){
         rankings.forEach(ranking => {
           table.row.add( [
-            ranking.player / 2,
+            (ranking.player * 1.0) / 2,
             ranking.tournament,
             ranking.startingElo,
             ranking.startingTitle,
             ranking.points,
-            ranking.sonnebornBerger / 2,
+            (ranking.sonnebornBerger * 1.0) / 2,
           ]).draw( false )
         });
       }

@@ -280,14 +280,54 @@ exports.startBergerTournament = async (rounds, tournamentId, players) => {
 exports.finishBergerRound = async (results, tournamentId, isLast) => {
     return await new Promise(function(resolve, reject){
         let sqlText = ``;
-        /*
+        
         let sqlUpdateSonneborn = `
         UPDATE tournamentplayerrankings AS TR
         INNER JOIN 
-            (SELECT
+            (SELECT (SUM(RES.Points) * 2)  AS SUMA
             FROM rounds AS R
-            WHERE R.Tournament = ${tournamentId}
-            GROU BY )`;*/
+            JOIN players AS P ON P.Id = R.BlackPlayer
+            JOIN tournamentplayerrankings AS RES ON RES.PlayerId = P.Id
+            WHERE R.Tournament = ${tournamentId} AND R.WhitePoints = 2
+            GROUP BY R.WhitePlayer) AS T
+        SET TR.SonnebornBerger = T.SUMA;`;
+
+        sqlUpdateSonneborn += `
+        UPDATE tournamentplayerrankings AS TR
+        INNER JOIN 
+            (SELECT SUM(RES.Points)  AS SUMA
+            FROM rounds AS R
+            JOIN players AS P ON P.Id = R.BlackPlayer
+            JOIN tournamentplayerrankings AS RES ON RES.PlayerId = P.Id
+            WHERE R.Tournament = ${tournamentId} AND R.WhitePoints = 1
+            GROUP BY R.WhitePlayer) AS T
+        SET TR.SonnebornBerger = T.SUMA;`;
+
+        sqlUpdateSonneborn += `
+        UPDATE tournamentplayerrankings AS TR
+        INNER JOIN 
+            (SELECT (SUM(RES.Points) * 2)  AS SUMA
+            FROM rounds AS R
+            JOIN players AS P ON P.Id = R.WhitePlayer
+            JOIN tournamentplayerrankings AS RES ON RES.PlayerId = P.Id
+            WHERE R.Tournament = ${tournamentId} AND R.WhitePoints = 2
+            GROUP BY R.BlackPlayer) AS T
+        SET TR.SonnebornBerger = T.SUMA;`;
+
+        sqlUpdateSonneborn += `
+        UPDATE tournamentplayerrankings AS TR
+        INNER JOIN 
+            (SELECT SUM(RES.Points)  AS SUMA
+            FROM rounds AS R
+            JOIN players AS P ON P.Id = R.WhitePlayer
+            JOIN tournamentplayerrankings AS RES ON RES.PlayerId = P.Id
+            WHERE R.Tournament = ${tournamentId} AND R.WhitePoints = 1
+            GROUP BY R.BlackPlayer) AS T
+        SET TR.SonnebornBerger = T.SUMA;`;
+
+        sqlText += sqlUpdateSonneborn;
+
+
         results.forEach(result => {
             let singleResultSql = `
             UPDATE rounds AS R
