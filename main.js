@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain , Tray, Notification, Menu  } = require('electron')
+const { app, BrowserWindow, ipcMain , Tray, Notification, Menu, BrowserView  } = require('electron')
 const path = require('path')
 const {initConnectionPool, getTestData, login, getTournamentTypes, addNewTournament} = require('./dbService')
 const {seedUsers} = require('./seeders')
@@ -8,6 +8,7 @@ let loginWin
 let mainWindow
 let tray
 let screenWidth, screenHeight
+let view
 
 app.setName('Chess app')
 
@@ -43,9 +44,9 @@ const createMainWindow = () => {
   })
 
   mainWindow.loadFile('views/index.html')
-  //mainWindow.loadFile('views/startTournament.html')
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
   setAppMenu()
+  setBrowserView()
 }
 
 app.whenReady().then(() => {
@@ -89,11 +90,13 @@ function setAppMenu(){
       label: 'Home page',
       click: async () => {
         mainWindow.loadFile('views/index.html')
+        setBrowserView()
       }
     },
     {
       label: 'Add tournament',
       click: async () => {
+        mainWindow.setBrowserView(null)
         mainWindow.loadFile('views/addTournament.html')
       }
     }
@@ -101,6 +104,15 @@ function setAppMenu(){
 
   const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
+}
+
+function setBrowserView(){
+  mainWindow.fullScreen = true
+  view = new BrowserView()
+  mainWindow.setBrowserView(view)
+  view.setBounds({ x: 900, y: 150, width: 370, height: 350 })
+  view.webContents.loadURL('https://www.youtube.com/watch?v=wPm9k6ul9EI&ab_channel=thechesswebsite')
+  mainWindow.fullScreen = false
 }
 
 ipcMain.on('login-event', (event, arg) => {
@@ -197,6 +209,7 @@ ipcMain.on('get-rankings', (event, arg) => {
   const tournamentId = arg;
   getRankings(tournamentId)
   .then((rankings) => {
+    mainWindow.setBrowserView(null)
     mainWindow.loadFile('views/rankings.html')
     mainWindow.webContents.on('dom-ready', () => {
       mainWindow.webContents.send('recieve-rankings', {result: rankings})

@@ -13,17 +13,19 @@
     </head>
 
     <body>
-        <div class="main">
+        <div class="main" style="margin-left: auto; margin-right: auto; margin-top: 2em; height: 590px;">
             <p class="sign" align="center">Enter Tournament Info</p>
             <form class="formTournamentAdd">
                 <input id="tournamentName_txb" class="un" type="text" align="center" placeholder="Name"/>
-                <select id="tournamentType_txb" class="un" align="center"></select>
-                <input id="tournamentNumOfRounds_txb" class="un" type="number" align="center" placeholder="Number of rounds"/>
-                <input id="startDate_txb" class="un" type="date" align="center" placeholder="Start Date"/>
-                <input id="endDate_txb" class="un" type="date" align="center" placeholder="End Date"/>
-                <input id="maxPlayerNumber_txb" class="un" type="number" align="center" placeholder="Max Number of Players"/>
-                <input id="tempo_txb" class="un" type="number" placeholder="Time in minutes per player">
-                <a class="submit" align="center" id="login_btn" onclick="onCreateTournament()">Create Tournament</a> 
+                <div class="un" style="margin-top: -8px;">
+                    <select id="tournamentType_txb" style="width: 100%;"></select>
+                </div>
+                <input id="tournamentNumOfRounds_txb" class="un" type="number" align="center" style="margin-top: -8px;" placeholder="Number of rounds"/>
+                <input id="startDate_txb" class="un" type="date" align="center" style="margin-top: -8px;" placeholder="Start Date"/>
+                <input id="endDate_txb" class="un" type="date" align="center" style="margin-top: -8px;" placeholder="End Date"/>
+                <input id="maxPlayerNumber_txb" class="un" type="number" align="center" style="margin-top: -8px;" placeholder="Max Number of Players"/>
+                <input id="tempo_txb" class="un" type="number" style="margin-top: -8px;" placeholder="Time in minutes per player">
+                <a class="submit" align="center" id="login_btn" style="margin-left: 25%;" onclick="onCreateTournament()">Create Tournament</a> 
                 <p class="wrong_msg" align="center" style="display: none;"></p>
             </form>
         </div>
