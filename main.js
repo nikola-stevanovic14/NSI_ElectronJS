@@ -44,7 +44,7 @@ const createMainWindow = () => {
   })
 
   mainWindow.loadFile('views/index.html')
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
   setAppMenu()
   setBrowserView()
 }
@@ -238,7 +238,7 @@ ipcMain.on('start-tournament', (event, arg) => {
             dto.matches = data;
             dto.tournamentId = tournamentId;
             dto.roundNumber = 1;
-            dto.maxRoundNumber = rounds;
+            dto.maxRoundNumber = arg.players.length - 1;
             mainWindow.webContents.send('round-data', dto);
           });
         });
@@ -265,16 +265,19 @@ ipcMain.on('finish-round', (event, arg) => {
           })
       }
       else{
-
-        mainWindow.loadFile('views/bergerTournamentRounds.html');
-          mainWindow.webContents.on('dom-ready', () => {
+        getRound(arg.tournamentId, arg.roundNumber + 1)
+          .then((round) =>{
             let dto = {};
-            dto.matches = data;
+            dto.matches = round;
             dto.tournamentId = arg.tournamentId;
-            dto.roundNumber = arg.roundNumber;
+            dto.roundNumber = arg.roundNumber + 1;
             dto.maxRoundNumber = arg.maxRoundNumber;
-            mainWindow.webContents.send('round-data', {data: dto});
+            mainWindow.webContents.send('round-data', dto);
+          })
+          .catch((err) => {
+            console.error(err);
           });
+        
       }
     }))
     .catch((err) => {

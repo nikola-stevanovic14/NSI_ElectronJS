@@ -22,17 +22,10 @@
               <tr>
                 <th>Player</th>
                 <th>Tournament</th>
-                <th>Starting Position</th>
                 <th>Starting Elo</th>
                 <th>Starting Title</th>
                 <th>Points</th>
-                <th>Median Bucholz</th>
-                <th>Bucholz</th>
-                <th>Wins</th>
-                <th>Black Wins</th>
                 <th>Sonneborn Berger</th>
-                <th>Elo Performance</th>
-                <th>Luck</th>
               </tr>
             </thead>
             <tbody style="text-align: center;">
@@ -62,19 +55,12 @@
       if (rankings != null){
         rankings.forEach(ranking => {
           table.row.add( [
-            ranking.player,
+            ranking.player / 2,
             ranking.tournament,
-            ranking.startingPosition,
             ranking.startingElo,
             ranking.startingTitle,
             ranking.points,
-            ranking.medianBucholz,
-            ranking.bucholz,
-            ranking.wins,
-            ranking.blackWins,
-            ranking.sonnebornBerger,
-            ranking.eloPerformance,
-            ranking.luck
+            ranking.sonnebornBerger / 2,
           ]).draw( false )
         });
       }

@@ -76,6 +76,7 @@
             const roundName = 'Round ' + roundNumber;
             $('#round-name').text(roundName);
             $('#round-table tr').remove();
+            table.rows().remove();
 
             const matches = data.matches;
             if (matches != null){
@@ -140,11 +141,11 @@
         let filledAll = results.reduce((prev, curr) => prev.WhitePoints != null && prev.BlackPoints != null 
                                                     && curr.WhitePoints != null && curr.BlackPoints != null);
         if (filledAll === true)
-            window.api.sendSync("finish-round", 
+            window.api.send("finish-round", 
                                 {
                                     results: results, 
                                     tournamentId: tournamentId, 
-                                    isLastRound: (maxRoundNumber > roundNumber),
+                                    isLastRound: !(maxRoundNumber > roundNumber),
                                     roundNumber: roundNumber,
                                     maxRoundNumber: maxRoundNumber
                                 });
