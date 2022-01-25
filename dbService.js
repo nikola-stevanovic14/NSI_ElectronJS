@@ -290,7 +290,7 @@ exports.finishBergerRound = async (results, tournamentId, isLast) => {
             JOIN tournamentplayerrankings AS RES ON RES.PlayerId = P.Id
             WHERE R.Tournament = ${tournamentId} AND R.WhitePoints = 2
             GROUP BY R.WhitePlayer) AS T
-        SET TR.SonnebornBerger = T.SUMA;`;
+        SET TR.SonnebornBerger = TR.SonnebornBerger + T.SUMA;`;
 
         sqlUpdateSonneborn += `
         UPDATE tournamentplayerrankings AS TR
@@ -301,7 +301,7 @@ exports.finishBergerRound = async (results, tournamentId, isLast) => {
             JOIN tournamentplayerrankings AS RES ON RES.PlayerId = P.Id
             WHERE R.Tournament = ${tournamentId} AND R.WhitePoints = 1
             GROUP BY R.WhitePlayer) AS T
-        SET TR.SonnebornBerger = T.SUMA;`;
+        SET TR.SonnebornBerger = TR.SonnebornBerger + T.SUMA;`;
 
         sqlUpdateSonneborn += `
         UPDATE tournamentplayerrankings AS TR
@@ -312,7 +312,7 @@ exports.finishBergerRound = async (results, tournamentId, isLast) => {
             JOIN tournamentplayerrankings AS RES ON RES.PlayerId = P.Id
             WHERE R.Tournament = ${tournamentId} AND R.WhitePoints = 2
             GROUP BY R.BlackPlayer) AS T
-        SET TR.SonnebornBerger = T.SUMA;`;
+        SET TR.SonnebornBerger = TR.SonnebornBerger + T.SUMA;`;
 
         sqlUpdateSonneborn += `
         UPDATE tournamentplayerrankings AS TR
@@ -323,7 +323,7 @@ exports.finishBergerRound = async (results, tournamentId, isLast) => {
             JOIN tournamentplayerrankings AS RES ON RES.PlayerId = P.Id
             WHERE R.Tournament = ${tournamentId} AND R.WhitePoints = 1
             GROUP BY R.BlackPlayer) AS T
-        SET TR.SonnebornBerger = T.SUMA;`;
+        SET TR.SonnebornBerger = TR.SonnebornBerger + T.SUMA;`;
 
         sqlText += sqlUpdateSonneborn;
 
