@@ -148,7 +148,7 @@ exports.getRankingsModels = async (tournamentId) => {
 exports.getPlayers = async () => {
     return await new Promise(function(resolve, reject){
         pool.query(`
-            SELECT A.*, B.Title AS TitleName 
+            SELECT A.*, B.Title AS TitleName, B.Id AS Title
             FROM players AS A
             INNER JOIN titles AS B ON B.Id = A.Title
             ORDER BY A.Id`, (err, data) => {
@@ -192,7 +192,8 @@ exports.getTitleById = async (titleId) => {
 exports.getRound = async (tournamentId, roundNumber) => {
     return await new Promise(function(resolve, reject){
         let sqlText = `
-        SELECT 
+        SELECT WHITE.FirstName AS WhiteFirstName, WHITE.LastName AS WhiteLastName, BLACK.FirstName AS BlackFirstName, BLACK.LastName AS BlackLastName, 
+            R.Id AS Id, WHITE.Id AS  WhiteId, BLACK.Id AS BlackId, R.Tournament AS TournamentId , T.NumberOfRounds AS NumberOfRounds
         FROM rounds AS R
         INNER JOIN tournaments AS T ON T.Id = R.Tournament
         INNER JOIN players AS WHITE ON R.WhitePlayer = WHITE.Id
@@ -203,6 +204,9 @@ exports.getRound = async (tournamentId, roundNumber) => {
             if(err){
                 reject(err)
             }
+            roundResult = {};
+            roundResult.roundNumber = roundNumber;
+            roundResult.matches = data;
             resolve(data);
         })
     })
@@ -217,10 +221,7 @@ exports.addRound = async (matches, roundNumber, tournamentId) => {
             (RoundNumber, WhitePlayer, BlackPlayer, Tournament, WhitePoints, BlackPoints, Started, Finished, WhiteTitle, BlackTitle, Result)
             VALUES (${roundNumber}, ${match.whiteId}, ${match.blackId}, ${tournamentId}, 
                 ${match.whitePoints != null ? match.whitePoints : 'NULL'}, ${match.blackPoints != null ? match.blackPoints : 'NULL'},
-                0, 0, ${match.whiteTitle}, ${match.blackTitle}, NULL);
-
-            
-            `;
+                0, 0, ${match.whiteTitle}, ${match.blackTitle}, NULL);`;
             sqlText += singleInsert;
         });
 
@@ -229,6 +230,87 @@ exports.addRound = async (matches, roundNumber, tournamentId) => {
                 reject(err)
             }
             resolve(data);
+        })
+    })
+}
+
+exports.startBergerTournament = async (rounds, tournamentId) => {
+    return await new Promise(function(resolve, reject){
+        let sqlText = ``;
+        rounds.forEach(round => {
+            rounds.matches.forEach(match => {
+                singleInsert = `
+                INSERT INTO rounds
+                (RoundNumber, WhitePlayer, BlackPlayer, Tournament, WhitePoints, BlackPoints, Started, Finished, WhiteTitle, BlackTitle, Result)
+                VALUES (${round.roundNumber}, ${match.whiteId}, ${match.blackId}, ${tournamentId}, 
+                    ${match.whitePoints != null ? match.whitePoints : 'NULL'}, ${match.blackPoints != null ? match.blackPoints : 'NULL'},
+                    0, 0, ${match.whiteTitle}, ${match.blackTitle}, NULL);`;
+                sqlText += singleInsert;
+            });
+        });
+        sqlText += `
+        UPDATE tournamets
+        SET
+            Started = 1
+        FROM tournaments
+        WHERE Id = ${tournamentId}`;
+
+        pool.query(sqlText,(err, data) => {
+            if(err){
+                reject(err)
+            }
+            resolve(data);
+        })
+    })
+}
+
+exports.finishBergerRound = async (results, tournamentId, isLast) => {
+    return await new Promise(function(resolve, reject){
+        let sqlText = ``;
+        /*
+        let sqlUpdateSonneborn = `
+        UPDATE tournamentplayerrankings AS TR
+        INNER JOIN 
+            (SELECT
+            FROM rounds AS R
+            WHERE R.Tournament = ${tournamentId}
+            GROU BY )`;*/
+        results.forEach(result => {
+            let singleResultSql = `
+            UPDATE rounds
+            SET
+                WhitePoints = ${result.WhitePoints},
+                BlackPoints = ${result.BlackPoints}
+            FROM rounds AS R
+            WHERE R.Id = ${result.Id};
+            
+            UPDATE tournamentplayerrankings AS TR
+            SET
+                Points = Points + ${result.WhitePoints}
+            WHERE TR.TournamentId = ${tournamentId} AND TR.PlayerId = ${result.WhiteId};
+            
+            UPDATE tournamentplayerrankings AS TR
+            SET
+                Points = Points + ${result.BlackPoints}
+            WHERE TR.TournamentId = ${tournamentId} AND TR.PlayerId = ${result.BlackId};`;
+            
+            sqlText += singleResultSql;
+        });
+
+        pool.query(sqlText,(err, data) => {
+            if(err){
+                reject(err)
+            }
+
+            if (!isLast){
+                resolve(data);
+            }
+            else{
+                /*
+                let updatePlayerDataSql = `
+                UPDATE tournamentplayer`;*/
+                resolve(data);
+            }
         })
     })
 }

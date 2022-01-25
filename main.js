@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain , Tray, Notification, Menu  } = require('ele
 const path = require('path')
 const {initConnectionPool, getTestData, login, getTournamentTypes, addNewTournament} = require('./dbService')
 const {seedUsers} = require('./seeders')
-const {getTournaments, getRankings, getPlayers} = require('./dbService')
+const {getTournaments, getRankings, getPlayers, addRound, getRound, startTournament, startBergerTournament, finishBergerRound} = require('./dbService')
 
 let loginWin
 let mainWindow
@@ -208,7 +208,50 @@ ipcMain.on('get-rankings', (event, arg) => {
 })
 
 ipcMain.on('start-tournament', (event, arg) => {
-  const players = arg.players
-  const tournamentId = arg.tournamentId
-  debugger
+  const rounds = arg.rounds;
+  const tournamentId = arg.tournamentId;
+  startBergerTournament(rounds, tournamentId)
+    .then((data) => {
+      /*
+      mainWindow.loadFile('views/startTournament.html')
+          mainWindow.webContents.on('dom-ready', () => {
+            mainWindow.webContents.send('start-tournament-data', {tournamentId: tournamentId, tournamentName: arg.Name, players: players})
+          });*/
+      getRound(tournamentId, 1)
+        .then((data) => {
+          mainWindow.loadFile('views/bergerTournamentRounds.html');
+          mainWindow.webContents.on('dom-ready', () => {
+            data.tournamentId = tournamentId;
+            mainWindow.webContents.send('round-data', data);
+          });
+        });
+      
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+})
+
+ipcMain.on('finish-round', (event, arg) => {
+  finishBergerRound(arg.results, arg.tournamentId, arg.isLastRound)
+    .then((data => {
+      if (arg.isLastRound){
+        getRankings(arg.tournamentId)
+          .then((rankings) => {
+            mainWindow.loadFile('views/rankings.html')
+            mainWindow.webContents.on('dom-ready', () => {
+              mainWindow.webContents.send('recieve-rankings', {result: rankings})
+            })
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+      }
+      else{
+
+      }
+    }))
+    .catch((err) => {
+      console.error(err);
+    });
 })
